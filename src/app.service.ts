@@ -1,8 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Report, ReportDocument } from './schema/report.schema';
 
 @Injectable()
 export class AppService {
-  getHello(data) {
-    console.log(data);
+  constructor(
+    @InjectModel(Report.name) private readonly reportModel: Model<ReportDocument>
+  ) {}
+
+  async getHello(data) {
+    const report = await this.reportModel.create(data)
+    // console.log(report);
   }
+
+  async resolveReport(reportId: String) {
+    const report = await this.reportModel.deleteOne({ _id: reportId })
+    // return report
+  }
+
+  async getReports(slug: string) {
+    const campReports = await this.reportModel.find({ campaignSlug: slug })
+    return campReports
+  }
+
 }

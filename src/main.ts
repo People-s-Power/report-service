@@ -7,33 +7,37 @@ async function bootstrap() {
   const rmqUrl = process.env.RMQ_URL
   const logger = new Logger('MAIN');
 
-  const app = await NestFactory.createMicroservice(AppModule, {
-    transport: Transport.RMQ,
-    options: {
-      urls: rmqUrl,
-      queue: 'report_queue',
-      noAck: false,
-      queueOptions: {
-        durable: false
-      }
-    } 
-  });
-
-  // const app = await NestFactory.create(AppModule)
-  // app.connectMicroservice({
-  //     transport: Transport.RMQ,
-  //     options: {
-  //       urls: rmqUrl,
-  //       queue: 'report_queue',
-  //       queueOptions: {
-  //         durable: false
-  //       }
+  // const app = await NestFactory.createMicroservice(AppModule, {
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: rmqUrl,
+  //     queue: 'report_queue',
+  //     noAck: false,
+  //     queueOptions: {
+  //       durable: false
   //     }
-  //   })
+  //   } 
+  // });
+
+  const PORT = process.env.PORT || 5000
+
+  const app = await NestFactory.create(AppModule)
+  app.connectMicroservice({
+      transport: Transport.RMQ,
+      options: {
+        urls: rmqUrl,
+        queue: 'report_queue',
+        queueOptions: {
+          durable: false
+        }
+      }
+    })
 
     // await app.startAllMicroservices()
   
   logger.log('microservices is listening')
-  await app.listen();
+  await app.listen(PORT, () => {
+    Logger.log(`server started on port ${PORT}`);
+  });;
 }
 bootstrap();
