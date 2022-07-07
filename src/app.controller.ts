@@ -1,11 +1,15 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ClientProxy, Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-@Controller('report')
+@Controller('')
 export class AppController {
   constructor(
     private readonly appService: AppService
     ) {}
+
+    sendHello() {
+      return this.appService.sendHello()
+    }
 
   @EventPattern('report-camp')
   getHello(@Payload() data, @Ctx() ctx: RmqContext) {
@@ -34,14 +38,14 @@ export class AppController {
       return results
     }
 
-    @Get('/:slug')
+    @Get('report/:slug')
     async getCampReports(@Param() param) {
       const { slug } = param
       const results = await this.appService.getReports(slug)
       return results
     }
 
-    @Get()
+    @Get('report')
     getAllReports() {
       return this.appService.getAllReports()
     }
