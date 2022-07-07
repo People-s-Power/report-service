@@ -9,6 +9,12 @@ export class AppService {
     @InjectModel(Report.name) private readonly reportModel: Model<ReportDocument>
   ) {}
 
+  async getAllReports() {
+    const reports = await this.reportModel.find()
+
+    return reports
+  }
+
   async getHello(data) {
     const report = await this.reportModel.create(data)
     // console.log(report);

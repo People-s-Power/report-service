@@ -27,6 +27,7 @@ async function bootstrap() {
       options: {
         urls: rmqUrl,
         queue: 'report_queue',
+        noAck: false,
         queueOptions: {
           durable: false
         }

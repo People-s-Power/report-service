@@ -1,7 +1,7 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ClientProxy, Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-@Controller()
+@Controller('report')
 export class AppController {
   constructor(
     private readonly appService: AppService
@@ -34,4 +34,21 @@ export class AppController {
       return results
     }
 
+    @Get('/:slug')
+    async getCampReports(@Param() param) {
+      const { slug } = param
+      const results = await this.appService.getReports(slug)
+      return results
+    }
+
+    @Get()
+    getAllReports() {
+      return this.appService.getAllReports()
+    }
+
+
+    @MessagePattern({ cmd: 'sum' })
+    accumulate(data: number[]): number {
+      return (data || []).reduce((a, b) => a + b);
+    }
 }
