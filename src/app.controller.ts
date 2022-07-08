@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Put } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ClientProxy, Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 @Controller()
@@ -13,10 +13,10 @@ export class AppController {
     }
 
   @EventPattern('report-camp')
-  getHello(@Payload() data, @Ctx() ctx: RmqContext) {
+  createReport(@Payload() data, @Ctx() ctx: RmqContext) {
     const channel = ctx.getChannelRef()
     const originalMsg = ctx.getMessage()
-    this.appService.getHello(data);
+    this.appService.createReport(data);
     channel.ack(originalMsg)
   }
 
@@ -51,9 +51,15 @@ export class AppController {
       return this.appService.getAllReports()
     }
 
-
-    @MessagePattern({ cmd: 'sum' })
-    accumulate(data: number[]): number {
-      return (data || []).reduce((a, b) => a + b);
+    @Post('report')
+    createReportPost(@Body() data) {
+      return this.appService.createReport(data);
     }
+
+    @Put('report/:reportId')
+    resolveReportPut(@Param() param) {
+      const { reportId } = param
+      return this.appService.resolveReport(reportId);
+    }
+
 }

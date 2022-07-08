@@ -22,14 +22,15 @@ export class AppService {
     return reports
   }
 
-  async getHello(data) {
+  async createReport(data) {
     const report = await this.reportModel.create(data)
     // console.log(report);
+    return report
   }
 
   async resolveReport(reportId: String) {
     const report = await this.reportModel.deleteOne({ _id: reportId })
-    // return report
+    return report
   }
 
   async getReports(slug: string) {
