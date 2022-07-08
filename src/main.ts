@@ -19,6 +19,15 @@ async function bootstrap() {
   //   } 
   // });
 
+
+  const devOrigins = [
+    'http://localhost',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'localho.st:3000',
+  ];
+
   const PORT = process.env.PORT || 5000
 
   const app = await NestFactory.create(AppModule)
@@ -34,6 +43,15 @@ async function bootstrap() {
       }
     })
 
+    const origin = devOrigins
+
+  app.enableCors(
+    {
+      origin,
+  
+      credentials: true,
+    }
+  );
     // await app.startAllMicroservices()
   
   logger.log('microservices is listening')
